@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    name: manual release and deploy
+    name: manual release and publish
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,8 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
 
       - name: Build with Gradle
-        run: ./gradlew clean build githubRelease --refresh-dependencies -Pversion=$VERSION
+        if: ${{ github.ref_name == 'main' }}
+        run: ./gradlew clean build githubRelease --refresh-dependencies -Psemver.modifier=${{ github.event.inputs.versionModifier }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
