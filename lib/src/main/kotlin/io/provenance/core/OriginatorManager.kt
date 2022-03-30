@@ -1,10 +1,8 @@
 package io.provenance.core
 
 import java.util.UUID
-import mu.KotlinLogging
 
 class OriginatorManager {
-    private val log = KotlinLogging.logger { }
     private val originators: MutableMap<UUID, Originator> = mutableMapOf()
     private val plugins: MutableSet<Plugin> = mutableSetOf()
 

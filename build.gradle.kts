@@ -17,8 +17,72 @@ plugins {
     id("io.github.nefilim.gradle.semver-plugin") version "0.3.10"
 }
 
+semver {
+    tagPrefix("v")
+    initialVersion("0.0.1")
+    findProperty("semver.overrideVersion")?.toString()?.let { overrideVersion(it) }
+    val semVerModifier = findProperty("semver.modifier")?.toString()?.let { buildVersionModifier(it) } ?: { nextPatch() }
+    versionModifier(semVerModifier)
+}
+
+/**
+ * The code below is a workaround for [gradle/gradle#20016](https://github.com/gradle/gradle/issues/20016) derived from
+ * [platform-portal@14319ed/docs/semver.md](https://github.com/FigureTechnologies/platform-portal/blob/14319ed7e97d88a1b8cbb2f2f7708cc0660dc518/docs/semver.md#limiting-dependencies-to-release-versions)
+ * to prevent version strings like `"1.0.+"` from resolving to pre-release versions.
+ * You can adjust the string set constants or comment the code out entirely to allow pre-release versions to be used.
+ */
+
+val invalidQualifiers = setOf("alpha", "beta", "rc", "nightly")
+val onlyReleaseArtifacts = setOf("originator-key-access-lib")
+val whiteListedMavenGroups = setOf("com.figure", "tech.figure", "io.provenance")
+
+configurations.all {
+    resolutionStrategy {
+        componentSelection {
+            all {
+                when {
+                    (
+                            onlyReleaseArtifacts.any { candidate.moduleIdentifier.name.startsWith(it) } &&
+                                    !candidate.version.toSemVer()?.preRelease.isNullOrEmpty()
+                            ) -> {
+                        reject("Rejecting prerelease version for OnlyReleaseArtifact[$candidate]")
+                    }
+                    (
+                            whiteListedMavenGroups.none { candidate.group.startsWith(it) } &&
+                                    invalidQualifiers.any { candidate.version.contains(it) }
+                            ) -> {
+                        reject("Invalid qualifier versions for $candidate")
+                    }
+                }
+            }
+        }
+    }
+}
+
+fun String?.toSemVer(): SemVer? =
+    try {
+        this?.let { versionString ->
+            SemVer.parse(versionString)
+        }
+    } catch (e: Exception) {
+        project.logger.info("Failed to parse semantic version from string '$this'")
+        null
+    }
+
 repositories {
     mavenCentral()
+}
+
+val semVersion = semver.version
+allprojects {
+    group = "io.provenance.originator-key-access-lib"
+    version = semVersion
+
+    tasks.withType<KotlinCompile>().all {
+        kotlinOptions {
+            jvmTarget = "11"
+        }
+    }
 }
 
 subprojects {
@@ -35,12 +99,6 @@ subprojects {
         mavenCentral()
     }
 
-    tasks.withType<KotlinCompile>().all {
-        kotlinOptions {
-            jvmTarget = "11"
-        }
-    }
-
     tasks.withType<Test> {
         useJUnitPlatform()
     }
@@ -53,7 +111,7 @@ subprojects {
     publishing {
         publications {
             create<MavenPublication>("maven") {
-                groupId = "io.provenance.key-access-lib"
+                groupId = "io.provenance.originator-key-access-lib"
                 artifactId = subProjectName
 
                 from(components["java"])
@@ -121,62 +179,10 @@ githubRelease {
     prerelease(false)
     repo("originator-key-access-lib")
     tagName(semver.versionTagName)
-//    body(changelog())
+    body(changelog())
 
     overwrite(false)
     dryRun(false)
     apiEndpoint("https://api.github.com")
     client
 }
-
-semver {
-    tagPrefix("v")
-    initialVersion("0.0.1")
-    findProperty("semver.overrideVersion")?.toString()?.let { overrideVersion(it) }
-    val semVerModifier = findProperty("semver.modifier")?.toString()?.let { buildVersionModifier(it) } ?: { nextPatch() }
-    versionModifier(semVerModifier)
-}
-
-/**
- * The code below is a workaround for [gradle/gradle#20016](https://github.com/gradle/gradle/issues/20016) derived from
- * [platform-portal@14319ed/docs/semver.md](https://github.com/FigureTechnologies/platform-portal/blob/14319ed7e97d88a1b8cbb2f2f7708cc0660dc518/docs/semver.md#limiting-dependencies-to-release-versions)
- * to prevent version strings like `"1.0.+"` from resolving to pre-release versions.
- * You can adjust the string set constants or comment the code out entirely to allow pre-release versions to be used.
- */
-
-val invalidQualifiers = setOf("alpha", "beta", "rc", "nightly")
-val onlyReleaseArtifacts = setOf("originator-key-access-lib")
-val whiteListedMavenGroups = setOf("com.figure", "tech.figure", "io.provenance")
-
-configurations.all {
-    resolutionStrategy {
-        componentSelection {
-            all {
-                when {
-                    (
-                            onlyReleaseArtifacts.any { candidate.moduleIdentifier.name.startsWith(it) } &&
-                                    !candidate.version.toSemVer()?.preRelease.isNullOrEmpty()
-                            ) -> {
-                        reject("Rejecting prerelease version for OnlyReleaseArtifact[$candidate]")
-                    }
-                    (
-                            whiteListedMavenGroups.none { candidate.group.startsWith(it) } &&
-                                    invalidQualifiers.any { candidate.version.contains(it) }
-                            ) -> {
-                        reject("Invalid qualifier versions for $candidate")
-                    }
-                }
-            }
-        }
-    }
-}
-
-fun String?.toSemVer(): SemVer? =
-    try {
-        this?.let { versionString ->
-            SemVer.parse(versionString)
-        }
-    } catch (e: Exception) {
-        project.logger.info("Failed to parse semantic version from string '$this'")
-        null
-    }
