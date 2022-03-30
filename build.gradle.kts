@@ -4,6 +4,7 @@ import net.swiftzer.semver.SemVer
 buildscript {
     dependencies {
         classpath("net.swiftzer.semver:semver:1.1.2")
+        classpath "com.github.breadmoirai:github-release:2.2.12"
     }
 }
 
