@@ -1,12 +1,3 @@
-plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.6.10"
-    `java-library`
-}
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -21,8 +12,4 @@ dependencies {
     testImplementation("io.kotest:kotest-framework-datatest-jvm:5.2.1")
     testImplementation("org.slf4j:slf4j-simple:1.7.36")
     testImplementation("io.mockk:mockk:1.12.2")
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }
