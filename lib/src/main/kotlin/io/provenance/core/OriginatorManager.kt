@@ -11,12 +11,13 @@ class OriginatorManager {
     fun register(plugin: Plugin) =
         plugins.add(plugin)
 
-    fun get(originatorUuid: UUID, typeConfig: Any): Originator {
+    fun get(originatorUuid: UUID, pluginSpec: Any): Originator {
         if (originatorUuid !in originators) {
-            plugins.firstOrNull { it.supports(typeConfig) }?.fetch(typeConfig)
+            originators[originatorUuid] = plugins.firstOrNull { it.supports(pluginSpec) }?.fetch(pluginSpec)
                 ?: throw IllegalStateException("$originatorUuid has no supported plugins.")
         }
 
-        return originators[originatorUuid] ?: throw IllegalArgumentException("$originatorUuid is not a supported originator.")
+        return originators[originatorUuid]
+            ?: throw IllegalArgumentException("$originatorUuid is not a supported originator.")
     }
 }

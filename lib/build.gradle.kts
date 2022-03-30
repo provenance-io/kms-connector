@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.4.31"
+    id("org.jetbrains.kotlin.jvm") version "1.6.10"
     `java-library`
 }
 
@@ -15,6 +15,14 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
     implementation("io.provenance.scope:encryption:0.1.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:5.2.1")
+    testImplementation("io.kotest:kotest-property-jvm:5.2.1")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.2.1")
+    testImplementation("io.kotest:kotest-framework-datatest-jvm:5.2.1")
+    testImplementation("org.slf4j:slf4j-simple:1.7.36")
+    testImplementation("io.mockk:mockk:1.12.2")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

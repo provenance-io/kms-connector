@@ -1,6 +1,6 @@
 package io.provenance.core
 
 interface Plugin {
-    fun supports(typeConfig: Any): Boolean
-    fun fetch(typeConfig: Any): Originator
+    fun supports(pluginSpec: Any): Boolean
+    fun fetch(pluginSpec: Any): Originator
 }
