@@ -20,7 +20,7 @@ plugins {
 
 semver {
     tagPrefix("v")
-    initialVersion("0.2.0")
+    initialVersion("0.2.1")
     val semVerModifier = findProperty("semver.modifier")?.toString()?.let { buildVersionModifier(it) } ?: { nextPatch() }
     versionModifier(semVerModifier)
 }
