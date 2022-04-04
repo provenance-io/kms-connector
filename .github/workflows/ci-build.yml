@@ -34,4 +34,4 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
 
       - name: Build with Gradle
-        run: ./gradlew clean build --refresh-dependencies :generateVersionFile :createAndPushVersionTag
+        run: ./gradlew clean build --refresh-dependencies

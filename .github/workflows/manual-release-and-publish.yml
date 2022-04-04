@@ -23,7 +23,7 @@ jobs:
 
       - name: Build with Gradle
         if: ${{ github.ref_name == 'main' }}
-        run: ./gradlew clean build githubRelease --refresh-dependencies
+        run: ./gradlew clean build --refresh-dependencies :generateVersionFile :createAndPushVersionTag githubRelease
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
