@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import io.provenance.core.KeyType
 import io.provenance.core.Originator
 import io.provenance.core.Plugin
+import java.util.UUID
 import kong.unirest.Unirest
 import mu.KotlinLogging
 
@@ -36,19 +37,25 @@ class VaultPlugin : Plugin {
         }
 
         val secretData = secret.data.data
-        if (!secretData.containsKey("private_mnemonic")) {
-            throw IllegalArgumentException("Missing key mnemonic for ${spec.originatorUuid}.")
-        }
-
-        if (!secretData.containsKey("private_encryption_key")) {
-            throw IllegalArgumentException("Missing private encryption key for ${spec.originatorUuid}.")
-        }
 
         val keys = mapOf(
-            KeyType.MNEMONIC to secretData["private_mnemonic"].toString(),
-            KeyType.ENCRYPTION to secretData["private_encryption_key"].toString(),
+            KeyType.MNEMONIC to getKey(secretData, "private_mnemonic", spec.originatorUuid),
+            KeyType.ENCRYPTION_PRIVATE_KEY to getKey(secretData, "private_encryption_key", spec.originatorUuid),
+            KeyType.ENCRYPTION_PUBLIC_KEY to getKey(secretData, "public_encryption_key", spec.originatorUuid),
+            KeyType.SIGNATURE_PRIVATE_KEY to getKey(secretData, "private_signature_key", spec.originatorUuid),
+            KeyType.SIGNATURE_PUBLIC_KEY to getKey(secretData, "public_signature_key", spec.originatorUuid),
+            KeyType.AUTHORIZATION_PRIVATE_KEY to getKey(secretData, "private_authorization_key", spec.originatorUuid),
+            KeyType.AUTHORIZATION_PUBLIC_KEY to getKey(secretData, "public_authorization_key", spec.originatorUuid),
         )
 
         return Originator(keys)
+    }
+
+    private fun getKey(secretData: Map<String, Any>, keyName: String, originator: UUID): String {
+        if (!secretData.containsKey(keyName)) {
+            throw IllegalArgumentException("Missing $keyName key for $originator.")
+        }
+
+        return secretData[keyName].toString()
     }
 }

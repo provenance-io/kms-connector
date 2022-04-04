@@ -20,7 +20,7 @@ plugins {
 
 semver {
     tagPrefix("v")
-    initialVersion("0.2.1")
+    initialVersion("0.2.2")
     val semVerModifier = findProperty("semver.modifier")?.toString()?.let { buildVersionModifier(it) } ?: { nextPatch() }
     versionModifier(semVerModifier)
 }
@@ -179,7 +179,7 @@ githubRelease {
     prerelease(false)
     repo("originator-key-access-lib")
     tagName(semver.versionTagName)
-    body(changelog())
+//    body(changelog())
 
     overwrite(false)
     dryRun(false)
