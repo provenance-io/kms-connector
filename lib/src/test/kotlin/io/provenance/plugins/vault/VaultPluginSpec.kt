@@ -29,7 +29,12 @@ class VaultPluginSpec : WordSpec() {
                 setup(
                     mapOf(
                         "private_mnemonic" to mnemonic,
-                        "private_encryption_key" to ""
+                        "private_encryption_key" to "",
+                        "public_encryption_key" to "",
+                        "private_authorization_key" to "",
+                        "public_authorization_key" to "",
+                        "private_signature_key" to "",
+                        "public_signature_key" to "",
                     )
                 )
 
