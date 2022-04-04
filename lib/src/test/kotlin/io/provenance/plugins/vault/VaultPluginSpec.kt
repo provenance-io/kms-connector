@@ -34,8 +34,8 @@ class VaultPluginSpec : WordSpec() {
                         "public_encryption_key" to "",
                         "private_authorization_key" to "",
                         "public_authorization_key" to "",
-                        "private_signature_key" to "",
-                        "public_signature_key" to "",
+                        "private_signing_key" to "",
+                        "public_signing_key" to "",
                     )
                 )
 
