@@ -39,6 +39,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create Outputs
+        run: |-
+          cd ${{ github.repository }}
+          echo "::set-output name=semVersion::$(cat build/semver/version.txt | head -1)"
+          echo "::set-output name=semVersionTag::$(cat build/semver/version.txt | tail -1)"
+        id: ci-release-create-outputs
+        shell: bash
+
       - name: Install gpg secret key
         run: |
           export GPG_TTY=$(tty)
@@ -48,7 +56,7 @@ jobs:
 
       - name: Publish to Maven Central
         run: |
-          ./gradlew publishToSonatype $(if [ "${{github.event.release.prerelease}}" = "true" ]; then echo 'closeSonatypeStagingRepository'; else echo 'closeAndReleaseSonatypeStagingRepository'; fi) \
+          ./gradlew publishToSonatype -Psemver.overrideVersion=${{ steps.ci-release-create-outputs.outputs.semVersion }} $(if [ "${{github.event.release.prerelease}}" = "true" ]; then echo 'closeSonatypeStagingRepository'; else echo 'closeAndReleaseSonatypeStagingRepository'; fi) \
             -Psigning.keyId=B7D30ABE -Psigning.password="${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}" -Psigning.secretKeyRingFile=$GITHUB_WORKSPACE/release.gpg \
             --info
         env:
