@@ -26,6 +26,7 @@ class VaultPluginSpec : WordSpec() {
             }
             "fetch secret" {
                 val mnemonic = "Longing Rusted Seventeen Daybreak Furnace Nine Benign Homecoming One Freight Car"
+
                 setup(
                     mapOf(
                         "private_mnemonic" to mnemonic,
