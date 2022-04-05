@@ -44,8 +44,8 @@ class VaultPlugin : Plugin {
             KeyType.ENCRYPTION_PUBLIC_KEY to getKey(secretData, "public_encryption_key", spec.originatorUuid),
             KeyType.SIGNING_PRIVATE_KEY to getKey(secretData, "private_signing_key", spec.originatorUuid),
             KeyType.SIGNING_PUBLIC_KEY to getKey(secretData, "public_signing_key", spec.originatorUuid),
-            KeyType.AUTHORIZATION_PRIVATE_KEY to getKey(secretData, "private_authorization_key", spec.originatorUuid),
-            KeyType.AUTHORIZATION_PUBLIC_KEY to getKey(secretData, "public_authorization_key", spec.originatorUuid),
+            KeyType.AUTH_PRIVATE_KEY to getKey(secretData, "private_auth_key", spec.originatorUuid),
+            KeyType.AUTH_PUBLIC_KEY to getKey(secretData, "public_auth_key", spec.originatorUuid),
         )
 
         return Originator(keys)
