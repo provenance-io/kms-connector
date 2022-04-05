@@ -32,8 +32,8 @@ class VaultPluginSpec : WordSpec() {
                         "private_mnemonic" to mnemonic,
                         "private_encryption_key" to "",
                         "public_encryption_key" to "",
-                        "private_authorization_key" to "",
-                        "public_authorization_key" to "",
+                        "private_auth_key" to "",
+                        "public_auth_key" to "",
                         "private_signing_key" to "",
                         "public_signing_key" to "",
                     )
