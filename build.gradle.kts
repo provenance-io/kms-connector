@@ -180,7 +180,7 @@ githubRelease {
     prerelease(false)
     repo("originator-key-access-lib")
     tagName(semver.versionTagName)
-//    body(changelog())
+    body(changelog())
 
     overwrite(false)
     dryRun(false)
