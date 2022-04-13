@@ -23,7 +23,7 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
 
       - name: Build with Gradle
-        run: ./gradlew clean build --refresh-dependencies :generateVersionFile :createAndPushVersionTag githubRelease
+        run: ./gradlew -i clean build --refresh-dependencies :generateVersionFile githubRelease
         if: ${{ github.ref_name == 'main' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
