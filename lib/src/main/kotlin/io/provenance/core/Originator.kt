@@ -1,14 +1,23 @@
 package io.provenance.core
 
 import io.provenance.scope.encryption.util.toJavaPublicKey
+import java.security.Key
 
-data class Originator(
+class Originator(
     val keys: Map<KeyType, Any>,
 ) {
-    fun signingPublicKey() = keys[KeyType.SIGNING_PUBLIC_KEY].toString().toJavaPublicKey()
-    fun signingPrivateKey() = keys[KeyType.SIGNING_PRIVATE_KEY].toString().toJavaPublicKey()
-    fun encryptionPublicKey() = keys[KeyType.ENCRYPTION_PUBLIC_KEY].toString().toJavaPublicKey()
-    fun encryptionPrivateKey() = keys[KeyType.ENCRYPTION_PRIVATE_KEY].toString().toJavaPublicKey()
-    fun authorizationPrivateKey() = keys[KeyType.AUTH_PRIVATE_KEY].toString().toJavaPublicKey()
-    fun authorizationPublicKey() = keys[KeyType.AUTH_PUBLIC_KEY].toString().toJavaPublicKey()
+    private val keyMap = mutableMapOf<KeyType, Key>()
+
+    fun signingPublicKey() = getKey(KeyType.SIGNING_PUBLIC_KEY)
+    fun signingPrivateKey() = getKey(KeyType.SIGNING_PRIVATE_KEY)
+    fun encryptionPublicKey() = getKey(KeyType.ENCRYPTION_PUBLIC_KEY)
+    fun encryptionPrivateKey() = getKey(KeyType.ENCRYPTION_PRIVATE_KEY)
+    fun authorizationPrivateKey() = getKey(KeyType.AUTH_PRIVATE_KEY)
+    fun authorizationPublicKey() = getKey(KeyType.AUTH_PUBLIC_KEY)
+
+    private fun getKey(keyType: KeyType) = keyMap.getOrDefault(keyType, null)?.let {
+        keys[KeyType.SIGNING_PUBLIC_KEY].toString().toJavaPublicKey()
+    }?.also {
+        keyMap[keyType] = it
+    }
 }
