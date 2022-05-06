@@ -4,7 +4,8 @@ dependencies {
     implementation("com.google.guava:guava:30.1-jre")
     implementation("com.konghq:unirest-java:3.13.6")
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
-    implementation("io.provenance.scope:encryption:0.1.0")
+    implementation("io.provenance.scope:encryption:0.5.+")
+    implementation("io.provenance.scope:util:0.5.+")
 
     testImplementation("io.kotest:kotest-assertions-core-jvm:5.2.1")
     testImplementation("io.kotest:kotest-property-jvm:5.2.1")
