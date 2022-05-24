@@ -1,11 +1,8 @@
 package io.provenance.core
 
 enum class KeyType {
-    AUTH_PUBLIC_KEY,
-    AUTH_PRIVATE_KEY,
     ENCRYPTION_PUBLIC_KEY,
     ENCRYPTION_PRIVATE_KEY,
     SIGNING_PUBLIC_KEY,
     SIGNING_PRIVATE_KEY,
-    MNEMONIC,
 }

@@ -29,11 +29,8 @@ class VaultPluginSpec : WordSpec() {
 
                 setup(
                     mapOf(
-                        "private_mnemonic" to mnemonic,
-                        "private_encryption_key" to "",
+                        "private_encryption_key" to mnemonic,
                         "public_encryption_key" to "",
-                        "private_auth_key" to "",
-                        "public_auth_key" to "",
                         "private_signing_key" to "",
                         "public_signing_key" to "",
                     )
@@ -44,7 +41,7 @@ class VaultPluginSpec : WordSpec() {
                 manager.register(VaultPlugin())
                 val originator = manager.get(spec.originatorUuid, spec)
 
-                originator.keys[KeyType.MNEMONIC] as String shouldBe mnemonic
+                originator.keys[KeyType.ENCRYPTION_PRIVATE_KEY] as String shouldBe mnemonic
             }
             "throw if key is not present" {
                 shouldThrow<IllegalArgumentException> {

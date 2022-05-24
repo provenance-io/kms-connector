@@ -13,8 +13,6 @@ class Originator(
     fun signingPrivateKey() = getKey(KeyType.SIGNING_PRIVATE_KEY) { it.toJavaPrivateKey() }
     fun encryptionPublicKey() = getKey(KeyType.ENCRYPTION_PUBLIC_KEY) { it.toJavaPublicKey() }
     fun encryptionPrivateKey() = getKey(KeyType.ENCRYPTION_PRIVATE_KEY) { it.toJavaPrivateKey() }
-    fun authorizationPrivateKey() = getKey(KeyType.AUTH_PRIVATE_KEY) { it.toJavaPrivateKey() }
-    fun authorizationPublicKey() = getKey(KeyType.AUTH_PUBLIC_KEY) { it.toJavaPublicKey() }
 
     private fun getKey(keyType: KeyType, transform: (String) -> Key) = keyMap.getOrPut(keyType) {
         keys[keyType].toString().let(transform)
