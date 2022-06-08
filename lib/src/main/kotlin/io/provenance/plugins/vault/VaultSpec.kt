@@ -1,9 +1,7 @@
 package io.provenance.plugins.vault
 
-import java.util.UUID
-
 data class VaultSpec(
-    val originatorUuid: UUID,
+    val originator: String,
     val vaultUrl: String,
     val vaultToken: String,
 )

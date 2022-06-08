@@ -9,7 +9,6 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.provenance.core.KeyType
 import io.provenance.core.OriginatorManager
-import java.util.UUID
 import kong.unirest.GetRequest
 import kong.unirest.HttpResponse
 import kong.unirest.JsonNode
@@ -19,7 +18,7 @@ class VaultPluginSpec : WordSpec() {
     init {
         "plugin" should {
             "support valid config types" {
-                VaultPlugin().supports(VaultSpec(UUID.randomUUID(), "", "")) shouldBe true
+                VaultPlugin().supports(VaultSpec("test", "", "")) shouldBe true
             }
             "not support other config types" {
                 VaultPlugin().supports("") shouldBe false
@@ -36,10 +35,10 @@ class VaultPluginSpec : WordSpec() {
                     )
                 )
 
-                val spec = VaultSpec(UUID.randomUUID(), "", "")
+                val spec = VaultSpec("test", "", "")
                 val manager = OriginatorManager()
                 manager.register(VaultPlugin())
-                val originator = manager.get(spec.originatorUuid, spec)
+                val originator = manager.get(spec.originator, spec)
 
                 originator.keys[KeyType.ENCRYPTION_PRIVATE_KEY] as String shouldBe mnemonic
             }
@@ -47,10 +46,10 @@ class VaultPluginSpec : WordSpec() {
                 shouldThrow<IllegalArgumentException> {
                     setup()
 
-                    val spec = VaultSpec(UUID.randomUUID(), "", "")
+                    val spec = VaultSpec("test", "", "")
                     val manager = OriginatorManager()
                     manager.register(VaultPlugin())
-                    manager.get(spec.originatorUuid, spec)
+                    manager.get(spec.originator, spec)
                 }
             }
         }
