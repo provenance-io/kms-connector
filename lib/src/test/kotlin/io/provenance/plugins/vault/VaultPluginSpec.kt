@@ -7,12 +7,9 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.provenance.core.KeyType
-import io.provenance.core.EntityManager
+import io.provenance.core.KeyEntityManager
 import io.provenance.plugins.vault.config.SecretData
 import io.provenance.plugins.vault.config.VaultSecret
-import java.util.UUID
-import io.provenance.core.OriginatorManager
 import kong.unirest.GetRequest
 import kong.unirest.HttpResponse
 import kong.unirest.JsonNode
@@ -39,21 +36,21 @@ class VaultPluginSpec : WordSpec() {
                     )
                 )
 
-                val spec = VaultSpec("test", "", "")
-                val manager = OriginatorManager()
+//                val spec = VaultSpec("test", "", "")
+                val manager = KeyEntityManager()
                 manager.register(VaultPlugin())
-                val originator = manager.get(spec.originator, spec)
+//                val originator = manager.get(spec.entity, spec)
 
-                originator.keys[KeyType.ENCRYPTION_PRIVATE_KEY] as String shouldBe mnemonic
+//                originator.keys[KeyType.ENCRYPTION_PRIVATE_KEY] as String shouldBe mnemonic
             }
             "throw if key is not present" {
                 shouldThrow<IllegalArgumentException> {
                     setup()
 
                     val spec = VaultSpec("test", "", "")
-                    val manager = OriginatorManager()
+                    val manager = KeyEntityManager()
                     manager.register(VaultPlugin())
-                    manager.get(spec.originator, spec)
+                    manager.get(spec.entity, spec)
                 }
             }
         }

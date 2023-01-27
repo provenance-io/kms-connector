@@ -6,8 +6,8 @@ import com.fortanix.sdkms.v1.api.SignAndVerifyApi
 import com.fortanix.sdkms.v1.auth.ApiKeyAuth
 import io.provenance.core.Plugin
 import io.provenance.entity.KeyEntity
+import io.provenance.entity.KeyType
 import io.provenance.entity.fortanix.FortanixKeyEntity
-import io.provenance.plugins.vault.VaultSpec
 import io.provenance.scope.encryption.ecies.ECUtils
 import io.provenance.scope.encryption.model.SmartKeyRef
 
@@ -32,12 +32,23 @@ class FortanixPlugin: Plugin {
         }
         
         val signAndVerifyApi = SignAndVerifyApi(smartKeyClient)
-        val smartKeyRef = SmartKeyRef(
-            ECUtils.convertBytesToPublicKey(spec.publicKey.toByteArray()),
+        val encryptionKeyRef = SmartKeyRef(
+            ECUtils.convertBytesToPublicKey(spec.encryptionPublicKey.toByteArray()),
+            spec.uuid,
+            signAndVerifyApi
+        )
+
+        val signingKeyRef = SmartKeyRef(
+            ECUtils.convertBytesToPublicKey(spec.signingPublicKey.toByteArray()),
             spec.uuid,
             signAndVerifyApi
         )
         
-        return FortanixKeyEntity(smartKeyRef)
+        return FortanixKeyEntity(
+            mapOf(
+                KeyType.SIGNING to signingKeyRef,
+                KeyType.ENCRYPTION to encryptionKeyRef
+            )
+        )
     }
 }

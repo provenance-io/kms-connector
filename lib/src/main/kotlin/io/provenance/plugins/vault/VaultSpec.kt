@@ -1,7 +1,7 @@
 package io.provenance.plugins.vault
 
 data class VaultSpec(
-    val originator: String,
+    val entity: String,
     val vaultUrl: String,
-    val vaultToken: String,
+    val tokenPath: String,
 )

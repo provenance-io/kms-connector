@@ -9,5 +9,4 @@ class KeystoneKeyEntity(keyRef: KeyRef) : KeyEntity(keyRef) {
     override fun sign(data: ByteArray): ByteArray {
         TODO("Not yet implemented")
     }
-    
 }
