@@ -1,4 +1,4 @@
-package io.provenance.plugins.vault
+package io.provenance.plugins.vault.config
 
 data class VaultSecret(
     val leaseId: String?,

@@ -8,7 +8,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.provenance.core.KeyType
-import io.provenance.core.OriginatorManager
+import io.provenance.core.EntityManager
+import io.provenance.plugins.vault.config.SecretData
+import io.provenance.plugins.vault.config.VaultSecret
 import java.util.UUID
 import kong.unirest.GetRequest
 import kong.unirest.HttpResponse
@@ -37,7 +39,7 @@ class VaultPluginSpec : WordSpec() {
                 )
 
                 val spec = VaultSpec(UUID.randomUUID(), "", "")
-                val manager = OriginatorManager()
+                val manager = EntityManager()
                 manager.register(VaultPlugin())
                 val originator = manager.get(spec.originatorUuid, spec)
 
@@ -48,7 +50,7 @@ class VaultPluginSpec : WordSpec() {
                     setup()
 
                     val spec = VaultSpec(UUID.randomUUID(), "", "")
-                    val manager = OriginatorManager()
+                    val manager = EntityManager()
                     manager.register(VaultPlugin())
                     manager.get(spec.originatorUuid, spec)
                 }

@@ -1,9 +1,13 @@
 package io.provenance.plugins.vault
 
 import com.google.gson.Gson
-import io.provenance.core.KeyType
-import io.provenance.core.Originator
 import io.provenance.core.Plugin
+import io.provenance.entity.KeyEntity
+import io.provenance.entity.direct.DirectKeyEntity
+import io.provenance.plugins.vault.config.VaultSecret
+import io.provenance.scope.encryption.model.DirectKeyRef
+import java.security.PrivateKey
+import java.security.PublicKey
 import java.util.UUID
 import kong.unirest.Unirest
 import mu.KotlinLogging
@@ -11,14 +15,13 @@ import mu.KotlinLogging
 class VaultPlugin : Plugin {
     private val log = KotlinLogging.logger { }
 
-    override fun supports(pluginSpec: Any): Boolean {
-        return when (pluginSpec) {
+    override fun supports(pluginSpec: Any): Boolean =
+        when (pluginSpec) {
             is VaultSpec -> true
             else -> false
         }
-    }
-
-    override fun fetch(pluginSpec: Any): Originator {
+    
+    override fun fetch(pluginSpec: Any): KeyEntity {
         val spec = pluginSpec as VaultSpec
 
         log.info("Fetching properties and creating configuration for ${spec.originatorUuid}")
@@ -37,15 +40,18 @@ class VaultPlugin : Plugin {
         }
 
         val secretData = secret.data.data
-
-        val keys = mapOf(
-            KeyType.ENCRYPTION_PRIVATE_KEY to getKey(secretData, "private_encryption_key", spec.originatorUuid),
-            KeyType.ENCRYPTION_PUBLIC_KEY to getKey(secretData, "public_encryption_key", spec.originatorUuid),
-            KeyType.SIGNING_PRIVATE_KEY to getKey(secretData, "private_signing_key", spec.originatorUuid),
-            KeyType.SIGNING_PUBLIC_KEY to getKey(secretData, "public_signing_key", spec.originatorUuid)
+        
+        val signingKeyRef = DirectKeyRef(
+            getKey(secretData, "public_signing_key", spec.originatorUuid) as PublicKey,
+            getKey(secretData, "private_signing_key", spec.originatorUuid) as PrivateKey
         )
 
-        return Originator(keys)
+//        val encryptionKeyRef = DirectKeyRef(
+//            getKey(secretData, "public_encryption_key", spec.originatorUuid) as PublicKey,
+//            getKey(secretData, "private_encryption_key", spec.originatorUuid) as PrivateKey
+//        )
+        
+        return DirectKeyEntity(signingKeyRef, getKey(secretData, "private_signing_key", spec.originatorUuid) as PrivateKey)
     }
 
     private fun getKey(secretData: Map<String, Any>, keyName: String, originator: UUID): String {
