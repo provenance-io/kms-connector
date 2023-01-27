@@ -13,7 +13,7 @@ class OriginatorManagerSpec : WordSpec() {
         "manager" should {
             "throw if plugin is not registered" {
                 shouldThrow<IllegalStateException> {
-                    EntityManager().get(UUID.randomUUID(), "")
+                    OriginatorManager().get("test", "")
                 }
             }
             "fetch secret from plugin only once" {
@@ -22,15 +22,15 @@ class OriginatorManagerSpec : WordSpec() {
                 every { mockPlugin.supports(any()) } returns true
                 every { mockPlugin.fetch(any()) } returns Originator(emptyMap())
 
-                val spec = VaultSpec(UUID.randomUUID(), "", "")
-                val manager = EntityManager()
+                val spec = VaultSpec("test", "", "")
+                val manager = OriginatorManager()
                 manager.register(mockPlugin)
-                manager.get(spec.originatorUuid, spec)
+                manager.get(spec.originator, spec)
 
                 verify(exactly = 1) { mockPlugin.fetch(any()) }
                 verify(exactly = 1) { mockPlugin.supports(any()) }
 
-                manager.get(spec.originatorUuid, spec)
+                manager.get(spec.originator, spec)
 
                 verify(exactly = 1) { mockPlugin.fetch(any()) }
                 verify(exactly = 1) { mockPlugin.supports(any()) }
