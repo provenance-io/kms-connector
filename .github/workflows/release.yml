@@ -29,19 +29,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set Image Details
+      - name: Set Artifact Details
         id: ci-release-create-outputs
         run: |
-          DOCKER_IMAGE=provenanceio/p8e-cee-api
           VERSION=$( echo ${{ github.event.release.tag_name }} | sed -e 's/^v//' )
           if [ "$VERSION" == "" ] ; then
             VERSION=$( echo ${{ github.event.inputs.versionTag }} | sed -e 's/^v//' )
           fi
-          TAGS="${DOCKER_IMAGE}:${VERSION}"
 
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
-          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
       - name: Install gpg secret key
         if: inputs.publishToMaven || github.event_name == 'release'
