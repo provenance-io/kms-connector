@@ -2,7 +2,6 @@ package io.provenance.core
 
 import io.provenance.entity.KeyEntity
 
-interface Plugin {
-    fun supports(pluginSpec: Any): Boolean
-    fun fetch(pluginSpec: Any): KeyEntity
+interface Plugin <T: PluginConfig> {
+    fun fetch(entity: String, config: T): KeyEntity
 }

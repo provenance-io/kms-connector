@@ -1,2 +1,2 @@
-rootProject.name = "originator-key-access-lib"
+rootProject.name = "kms-connector"
 include("lib")

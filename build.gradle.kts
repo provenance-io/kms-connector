@@ -13,7 +13,7 @@ repositories {
 }
 
 allprojects {
-    group = "io.provenance.originator-key-access-lib"
+    group = "io.provenance.kms-connector"
 
     tasks.withType<KotlinCompile>().all {
         kotlinOptions {
@@ -48,7 +48,7 @@ subprojects {
     publishing {
         publications {
             create<MavenPublication>("maven") {
-                groupId = "io.provenance.originator-key-access-lib"
+                groupId = "io.provenance.kms-connector"
                 artifactId = subProjectName
 
                 from(components["java"])
@@ -74,9 +74,9 @@ subprojects {
                     }
 
                     scm {
-                        connection.set("git@github.com:provenance-io/originator-key-access-lib.git")
-                        developerConnection.set("git@github.com:provenance-io/originator-key-access-lib.git")
-                        url.set("https://github.com/provenance-io/originator-key-access-lib")
+                        connection.set("git@github.com:provenance-io/kms-connector.git")
+                        developerConnection.set("git@github.com:provenance-io/kms-connector.git")
+                        url.set("https://github.com/provenance-io/kms-connector")
                     }
                 }
             }

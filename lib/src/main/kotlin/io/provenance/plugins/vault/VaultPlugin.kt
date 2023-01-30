@@ -13,29 +13,22 @@ import java.io.File
 import kong.unirest.Unirest
 import mu.KotlinLogging
 
-class VaultPlugin : Plugin {
+class VaultPlugin : Plugin<VaultConfig> {
     private val log = KotlinLogging.logger { }
 
-    override fun supports(pluginSpec: Any): Boolean =
-        when (pluginSpec) {
-            is VaultSpec -> true
-            else -> false
-        }
-    
-    override fun fetch(pluginSpec: Any): KeyEntity {
-        val spec = pluginSpec as VaultSpec
+    override fun fetch(entity: String, config: VaultConfig): KeyEntity {
 
-        log.info("Fetching properties and creating configuration for ${spec.entity}")
+        log.info("Fetching properties and creating configuration for $entity")
 
-       val path = if (File(spec.tokenPath).exists()) {
-            File(spec.tokenPath)
+       val path = if (File(config.tokenPath).exists()) {
+            File(config.tokenPath)
         } else {
-            File(System.getProperty("user.home")).resolve(spec.tokenPath)
+            File(System.getProperty("user.home")).resolve(config.tokenPath)
         }
 
         val token = path.readText(Charsets.UTF_8)
 
-        val response = Unirest.get(spec.vaultUrl)
+        val response = Unirest.get(config.vaultUrl)
             .header("X-Vault-Token", token)
             .asJson()
 
@@ -45,19 +38,19 @@ class VaultPlugin : Plugin {
             if (!secret.errors.isNullOrEmpty()) {
                 throw Error(secret.errors.joinToString(limit = 3))
             }
-            throw IllegalArgumentException("Could not find secret for ${spec.entity}.")
+            throw IllegalArgumentException("Could not find secret for $entity.")
         }
 
         val secretData = secret.data.data
         
         val signingKeyRef = DirectKeyRef(
-            getKey(secretData, "public_signing_key", spec.entity).toJavaPublicKey(),
-            getKey(secretData, "private_signing_key", spec.entity).toJavaPrivateKey()
+            getKey(secretData, "public_signing_key", entity).toJavaPublicKey(),
+            getKey(secretData, "private_signing_key", entity).toJavaPrivateKey()
         )
         
         val encryptionKeyRef = DirectKeyRef(
-            getKey(secretData, "public_encryption_key", spec.entity).toJavaPublicKey(),
-            getKey(secretData, "private_encryption_key", spec.entity).toJavaPrivateKey()
+            getKey(secretData, "public_encryption_key", entity).toJavaPublicKey(),
+            getKey(secretData, "private_encryption_key", entity).toJavaPrivateKey()
             
         )
         
@@ -66,7 +59,7 @@ class VaultPlugin : Plugin {
                 KeyType.SIGNING to signingKeyRef,
                 KeyType.ENCRYPTION to encryptionKeyRef
             ),
-            getKey(secretData, "private_signing_key", spec.entity).toJavaPrivateKey()) // Use signing key for all signing processes
+            getKey(secretData, "private_signing_key", entity).toJavaPrivateKey()) // Use signing key for all signing processes
     }
 
     private fun getKey(secretData: Map<String, Any>, keyName: String, originator: String): String {

@@ -1,7 +1,8 @@
 package io.provenance.plugins.vault
 
-data class VaultSpec(
-    val entity: String,
+import io.provenance.core.PluginConfig
+
+data class VaultConfig(
     val vaultUrl: String,
     val tokenPath: String,
-)
+) : PluginConfig()
