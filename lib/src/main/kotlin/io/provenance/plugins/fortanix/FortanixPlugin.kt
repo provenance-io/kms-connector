@@ -10,19 +10,13 @@ import io.provenance.entity.KeyType
 import io.provenance.entity.fortanix.FortanixKeyEntity
 import io.provenance.scope.encryption.ecies.ECUtils
 import io.provenance.scope.encryption.model.SmartKeyRef
+import io.provenance.scope.util.toUuid
 
-class FortanixPlugin: Plugin {
-    override fun supports(pluginSpec: Any): Boolean =
-        when (pluginSpec) {
-            is FortanixPluginSpec -> true
-            else -> false
-        }
-
-    override fun fetch(pluginSpec: Any): KeyEntity {
-        val spec = pluginSpec as FortanixPluginSpec
+class FortanixPlugin: Plugin<FortanixConfig> {
+    override fun fetch(entity: String, config: FortanixConfig): KeyEntity {
         
         val smartKeyClient = ApiClient().apply {
-            setBasicAuthString(spec.apiKey)
+            setBasicAuthString(config.apiKey)
             com.fortanix.sdkms.v1.Configuration.setDefaultApiClient(this)
 
             val authResponse = AuthenticationApi(this).authorize()
@@ -33,14 +27,14 @@ class FortanixPlugin: Plugin {
         
         val signAndVerifyApi = SignAndVerifyApi(smartKeyClient)
         val encryptionKeyRef = SmartKeyRef(
-            ECUtils.convertBytesToPublicKey(spec.encryptionPublicKey.toByteArray()),
-            spec.uuid,
+            ECUtils.convertBytesToPublicKey(config.encryptionPublicKey.toByteArray()),
+            entity.toUuid(),
             signAndVerifyApi
         )
 
         val signingKeyRef = SmartKeyRef(
-            ECUtils.convertBytesToPublicKey(spec.signingPublicKey.toByteArray()),
-            spec.uuid,
+            ECUtils.convertBytesToPublicKey(config.signingPublicKey.toByteArray()),
+            entity.toUuid(),
             signAndVerifyApi
         )
         

@@ -8,19 +8,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.provenance.core.KeyEntityManager
+import io.provenance.core.Plugin
+import io.provenance.core.PluginConfig
 import io.provenance.entity.KeyType
 import io.provenance.plugins.vault.config.SecretData
 import io.provenance.plugins.vault.config.VaultSecret
-import io.provenance.scope.encryption.ecies.ECUtils
-import io.provenance.scope.encryption.util.toHex
 import io.provenance.scope.encryption.util.toJavaPublicKey
-import io.provenance.scope.encryption.util.toPrivateKeyProto
-import io.provenance.scope.proto.PK
-import io.provenance.scope.util.toByteString
-import io.provenance.scope.util.toHexString
 import java.io.File
-import java.security.KeyPairGenerator
-import java.security.PublicKey
 import kong.unirest.GetRequest
 import kong.unirest.HttpResponse
 import kong.unirest.JsonNode
@@ -34,13 +28,7 @@ class VaultPluginSpec : WordSpec() {
             val token = withContext(Dispatchers.IO) {
                 File.createTempFile("temp", null)
             }
-            
-            "support valid config types" {
-                VaultPlugin().supports(VaultSpec("test", "", "")) shouldBe true
-            }
-            "not support other config types" {
-                VaultPlugin().supports("") shouldBe false
-            }
+
             "fetch secret" {
                 val publicKeyHex = "0A4104D7820B3244C3F72A1D2631E089E6C40D7D8C88221E771ED631402AC025E59D9CFF82078F4492E231691A6C4D1D36F085CD7B3ED699C35C685E462E4106C13A1C"
                 val privateKeyHex = "0A207EA5368D527F633A76EA43EC6103574C72BB9175A6C8D381D8403CAD70A928B6"
@@ -54,10 +42,10 @@ class VaultPluginSpec : WordSpec() {
                     )
                 )
 
-                val spec = VaultSpec("test", "", token.absolutePath)
+                val spec = VaultConfig("", token.absolutePath)
                 val manager = KeyEntityManager()
                 manager.register(VaultPlugin())
-                val originator = manager.get(spec.entity, spec)
+                val originator = manager.get("test", spec)
 
                 originator.getKeyRef(KeyType.SIGNING).publicKey shouldBe publicKeyHex.toJavaPublicKey()
             }
@@ -65,10 +53,11 @@ class VaultPluginSpec : WordSpec() {
                 shouldThrow<IllegalArgumentException> {
                     setup()
 
-                    val spec = VaultSpec("test", "", token.absolutePath)
+                    val spec = VaultConfig("", token.absolutePath)
                     val manager = KeyEntityManager()
+                    
                     manager.register(VaultPlugin())
-                    manager.get(spec.entity, spec)
+                    manager.get("", spec)
                 }
             }
         }
