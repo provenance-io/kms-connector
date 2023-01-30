@@ -12,7 +12,7 @@ class KeyEntityManager {
     fun <T: PluginConfig> get(entity: String, config: T): KeyEntity {
         if (entity !in entities) {
             entities[entity] = plugins.filterIsInstance<Plugin<T>>().singleOrNull()?.fetch(entity, config)
-                ?: throw IllegalStateException("$entity has no supported plugins.")
+                ?: throw IllegalStateException("$entity did not have exactly one supported plugin.")
         }
 
         return entities[entity]
