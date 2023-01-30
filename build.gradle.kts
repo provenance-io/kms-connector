@@ -105,21 +105,3 @@ nexusPublishing {
         }
     }
 }
-
-val githubTokenValue = findProperty("githubToken")?.toString() ?: System.getenv("GITHUB_TOKEN")
-
-githubRelease {
-    token(githubTokenValue)
-    owner("provenance-io")
-    targetCommitish("main")
-    draft(false)
-    prerelease(false)
-    repo("originator-key-access-lib")
-    tagName(semver.versionTagName)
-    body(changelog())
-
-    overwrite(false)
-    dryRun(false)
-    apiEndpoint("https://api.github.com")
-    client
-}
