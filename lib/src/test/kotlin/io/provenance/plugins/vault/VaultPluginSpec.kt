@@ -7,16 +7,34 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.provenance.core.KeyType
-import io.provenance.core.OriginatorManager
+import io.provenance.core.KeyEntityManager
+import io.provenance.entity.KeyType
+import io.provenance.plugins.vault.config.SecretData
+import io.provenance.plugins.vault.config.VaultSecret
+import io.provenance.scope.encryption.ecies.ECUtils
+import io.provenance.scope.encryption.util.toHex
+import io.provenance.scope.encryption.util.toJavaPublicKey
+import io.provenance.scope.encryption.util.toPrivateKeyProto
+import io.provenance.scope.proto.PK
+import io.provenance.scope.util.toByteString
+import io.provenance.scope.util.toHexString
+import java.io.File
+import java.security.KeyPairGenerator
+import java.security.PublicKey
 import kong.unirest.GetRequest
 import kong.unirest.HttpResponse
 import kong.unirest.JsonNode
 import kong.unirest.Unirest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class VaultPluginSpec : WordSpec() {
     init {
         "plugin" should {
+            val token = withContext(Dispatchers.IO) {
+                File.createTempFile("temp", null)
+            }
+            
             "support valid config types" {
                 VaultPlugin().supports(VaultSpec("test", "", "")) shouldBe true
             }
@@ -24,32 +42,33 @@ class VaultPluginSpec : WordSpec() {
                 VaultPlugin().supports("") shouldBe false
             }
             "fetch secret" {
-                val mnemonic = "Longing Rusted Seventeen Daybreak Furnace Nine Benign Homecoming One Freight Car"
+                val publicKeyHex = "0A4104D7820B3244C3F72A1D2631E089E6C40D7D8C88221E771ED631402AC025E59D9CFF82078F4492E231691A6C4D1D36F085CD7B3ED699C35C685E462E4106C13A1C"
+                val privateKeyHex = "0A207EA5368D527F633A76EA43EC6103574C72BB9175A6C8D381D8403CAD70A928B6"
 
                 setup(
                     mapOf(
-                        "private_encryption_key" to mnemonic,
-                        "public_encryption_key" to "",
-                        "private_signing_key" to "",
-                        "public_signing_key" to "",
+                        "private_encryption_key" to privateKeyHex,
+                        "public_encryption_key" to publicKeyHex,
+                        "private_signing_key" to privateKeyHex,
+                        "public_signing_key" to publicKeyHex,
                     )
                 )
 
-                val spec = VaultSpec("test", "", "")
-                val manager = OriginatorManager()
+                val spec = VaultSpec("test", "", token.absolutePath)
+                val manager = KeyEntityManager()
                 manager.register(VaultPlugin())
-                val originator = manager.get(spec.originator, spec)
+                val originator = manager.get(spec.entity, spec)
 
-                originator.keys[KeyType.ENCRYPTION_PRIVATE_KEY] as String shouldBe mnemonic
+                originator.getKeyRef(KeyType.SIGNING).publicKey shouldBe publicKeyHex.toJavaPublicKey()
             }
             "throw if key is not present" {
                 shouldThrow<IllegalArgumentException> {
                     setup()
 
-                    val spec = VaultSpec("test", "", "")
-                    val manager = OriginatorManager()
+                    val spec = VaultSpec("test", "", token.absolutePath)
+                    val manager = KeyEntityManager()
                     manager.register(VaultPlugin())
-                    manager.get(spec.originator, spec)
+                    manager.get(spec.entity, spec)
                 }
             }
         }

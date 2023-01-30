@@ -1,4 +1,4 @@
-package io.provenance.plugins.vault
+package io.provenance.plugins.vault.config
 
 data class SecretData(
     val data: Map<String, Any>,

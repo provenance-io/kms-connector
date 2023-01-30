@@ -6,6 +6,10 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
     implementation("io.provenance.scope:encryption:0.5.1")
     implementation("io.provenance.scope:util:0.5.1")
+    implementation("io.provenance.hdwallet:hdwallet:0.1.15")
+    implementation("io.provenance.hdwallet:hdwallet-bip39:0.1.15")
+    implementation("com.fortanix:sdkms-client:3.23.1408")
+    implementation("com.google.protobuf:protobuf-java:3.21.12")
 
     testImplementation("io.kotest:kotest-assertions-core-jvm:5.2.1")
     testImplementation("io.kotest:kotest-property-jvm:5.2.1")
