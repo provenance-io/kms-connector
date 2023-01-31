@@ -1,15 +1,19 @@
 package io.provenance.core
 
 import io.provenance.entity.KeyEntity
+import kotlin.reflect.typeOf
 
 class KeyEntityManager {
     private val entities: MutableMap<String, KeyEntity> = mutableMapOf()
     private val plugins: MutableSet<Plugin<*>> = mutableSetOf()
 
-    fun register(plugin: Plugin<*>) =
-        plugins.add(plugin)
+    fun <T : PluginConfig> register(plugin: Plugin<T>) {
+        if (plugins.filterIsInstance<Plugin<T>>().isEmpty()) {
+            plugins.add(plugin)
+        }
+    }
 
-    fun <T: PluginConfig> get(entity: String, config: T): KeyEntity {
+    fun <T : PluginConfig> get(entity: String, config: T): KeyEntity {
         if (entity !in entities) {
             entities[entity] = plugins.filterIsInstance<Plugin<T>>().singleOrNull()?.fetch(entity, config)
                 ?: throw IllegalStateException("$entity did not have exactly one supported plugin.")
