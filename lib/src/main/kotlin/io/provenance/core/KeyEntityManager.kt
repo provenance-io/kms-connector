@@ -1,7 +1,6 @@
 package io.provenance.core
 
 import io.provenance.entity.KeyEntity
-import kotlin.reflect.typeOf
 
 class KeyEntityManager {
     private val entities: MutableMap<String, KeyEntity> = mutableMapOf()
