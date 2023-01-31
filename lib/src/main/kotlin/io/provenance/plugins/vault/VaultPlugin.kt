@@ -15,6 +15,7 @@ import mu.KotlinLogging
 
 class VaultPlugin : Plugin<VaultConfig> {
     private val log = KotlinLogging.logger { }
+    
     override fun fetch(entity: String, config: VaultConfig): KeyEntity {
 
         log.info("Fetching properties and creating configuration for $entity")
