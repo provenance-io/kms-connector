@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.provenance.plugins.keystone.model.AgreeKeyRequest
 import io.provenance.plugins.keystone.model.AgreeKeyResponse
+import io.provenance.plugins.keystone.model.SignatureRequest
+import io.provenance.plugins.keystone.model.SignatureResponse
+import io.provenance.plugins.keystone.model.SigningType
 import io.provenance.scope.encryption.crypto.ApiSignerClient
 import io.provenance.scope.encryption.domain.inputstream.DIMEInputStream.Companion.configureProvenance
 import io.provenance.scope.encryption.ecies.ECUtils
@@ -36,13 +39,14 @@ class KeystoneClient(
         .create(KeystoneApi::class.java)
 
     override fun sign(data: ByteArray): ByteArray {
-        val response = client.sign(apikey, entity,0,data)
+        val request = SignatureRequest(data, SigningType.PB)
+        val response = client.sign(apikey, entity,0, request)
 
         if (!response.isSuccessful) {
             throw IllegalStateException("Failed to sign with error ${response.errorBody()}")
         }
 
-        return response.body()!!
+        return response.body()?.signatureBytes!!
     }
 
     override fun secretKey(ephemeralPublicKey: PublicKey): ByteArray {
@@ -63,8 +67,8 @@ interface KeystoneApi {
         @Header("apikey") apikey: String,
         @Path("memberUuid") member: String,
         @Path("addressIndex") index: Int,
-        data: ByteArray,
-    ): Response<ByteArray>
+        @Body signatureRequest: SignatureRequest,
+    ): Response<SignatureResponse>
     
     @POST("/agree/key")
     fun secretKey(
