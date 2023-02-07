@@ -12,6 +12,7 @@ import io.provenance.scope.encryption.domain.inputstream.DIMEInputStream.Compani
 import io.provenance.scope.encryption.ecies.ECUtils
 import java.security.PublicKey
 import java.util.UUID
+import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -40,39 +41,46 @@ class KeystoneClient(
 
     override fun sign(data: ByteArray): ByteArray {
         val request = SignatureRequest(data, SigningType.PB)
-        val response = client.sign(apikey, entity,0, request)
 
-        if (!response.isSuccessful) {
-            throw IllegalStateException("Failed to sign with error ${response.errorBody()}")
+        return runBlocking {
+
+            val response = client.sign(apikey, entity, 0, request)
+
+            if (!response.isSuccessful) {
+                throw IllegalStateException("Failed to sign with error ${response.errorBody()}")
+            }
+
+            response.body()?.signatureBytes!!
         }
-
-        return response.body()?.signatureBytes!!
     }
 
     override fun secretKey(ephemeralPublicKey: PublicKey): ByteArray {
-        val request = AgreeKeyRequest(entity, ECUtils.convertPublicKeyToBytes(ephemeralPublicKey),0)
-        val response = client.secretKey(apikey, request)
+        val request = AgreeKeyRequest(entity, ECUtils.convertPublicKeyToBytes(ephemeralPublicKey), 0)
 
-        if (!response.isSuccessful) {
-            throw IllegalStateException("Failed to retrieve secret key with error ${response.errorBody()}")
+        return runBlocking {
+            val response = client.secretKey(apikey, request)
+
+            if (!response.isSuccessful) {
+                throw IllegalStateException("Failed to retrieve secret key with error ${response.errorBody()}")
+            }
+
+            response.body()?.agreeKey!!
         }
-
-        return response.body()?.agreeKey!!
     }
 }
 
 interface KeystoneApi {
     @POST("/sign/member/{memberUuid}/address/{addressIndex}")
-    fun sign(
+    suspend fun sign(
         @Header("apikey") apikey: String,
         @Path("memberUuid") member: String,
         @Path("addressIndex") index: Int,
         @Body signatureRequest: SignatureRequest,
     ): Response<SignatureResponse>
-    
+
     @POST("/agree/key")
-    fun secretKey(
+    suspend fun secretKey(
         @Header("apikey") apikey: String,
-        @Body agreeKeyRequest: AgreeKeyRequest
+        @Body agreeKeyRequest: AgreeKeyRequest,
     ): Response<AgreeKeyResponse>
 }

@@ -10,6 +10,7 @@ dependencies {
     implementation("io.provenance.hdwallet:hdwallet-bip39:0.1.15")
     implementation("com.fortanix:sdkms-client:3.23.1408")
     implementation("com.google.protobuf:protobuf-java:3.21.12")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4")
     
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
