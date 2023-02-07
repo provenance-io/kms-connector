@@ -40,7 +40,7 @@ class KeystoneClient(
 
     override fun sign(data: ByteArray): ByteArray {
         val request = SignatureRequest(data, SigningType.PB)
-        val response = client.sign(apikey, entity,0, request)
+        val response = client.sign(apikey, entity, 0, request)
 
         if (!response.isSuccessful) {
             throw IllegalStateException("Failed to sign with error ${response.errorBody()}")
