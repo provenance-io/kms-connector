@@ -50,7 +50,7 @@ class KeystoneClient(
     }
 
     override fun secretKey(ephemeralPublicKey: PublicKey): ByteArray {
-        val request = AgreeKeyRequest(entity, ECUtils.convertPublicKeyToBytes(ephemeralPublicKey),0)
+        val request = AgreeKeyRequest(entity, ECUtils.convertPublicKeyToBytes(ephemeralPublicKey), 0)
         val response = client.secretKey(apikey, request)
 
         if (!response.isSuccessful) {
