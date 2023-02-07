@@ -9,7 +9,7 @@ import io.provenance.scope.encryption.model.ApiKeyRef
 
 class KeystonePlugin: Plugin<KeyStoneConfig> {
     override fun fetch(entity: String, config: KeyStoneConfig): KeyEntity {
-        val client = KeystoneClient(entity, config.apiKey)
+        val client = KeystoneClient(entity, config.apiKey, config.url)
         
         val encryptionKeyRef = ApiKeyRef(ECUtils.convertBytesToPublicKey(config.signingPublicKey.toByteArray()), client)
         val signingKeyRef = ApiKeyRef(ECUtils.convertBytesToPublicKey(config.encryptionPublicKey.toByteArray()), client)

@@ -20,10 +20,11 @@ import retrofit2.http.Path
 
 class KeystoneClient(
     private val entity: String,
-    private val apikey: String
+    private val apikey: String,
+    url: String,
 ) : ApiSignerClient {
-    var client = Retrofit.Builder()
-        .baseUrl("https://figure.com/keystone/secured/api")
+    private val client: KeystoneApi = Retrofit.Builder()
+        .baseUrl(url)
         .addConverterFactory(
             JacksonConverterFactory.create(
                 ObjectMapper()
@@ -35,12 +36,7 @@ class KeystoneClient(
         .create(KeystoneApi::class.java)
 
     override fun sign(data: ByteArray): ByteArray {
-        val response = client.sign(
-            apikey, 
-            entity,
-            0,
-            data
-        )
+        val response = client.sign(apikey, entity,0,data)
 
         if (!response.isSuccessful) {
             throw IllegalStateException("Failed to sign with error ${response.errorBody()}")
@@ -50,16 +46,11 @@ class KeystoneClient(
     }
 
     override fun secretKey(ephemeralPublicKey: PublicKey): ByteArray {
-        val request = AgreeKeyRequest(
-            entity,
-            ECUtils.convertPublicKeyToBytes(ephemeralPublicKey),
-            0
-        )
-        
+        val request = AgreeKeyRequest(entity, ECUtils.convertPublicKeyToBytes(ephemeralPublicKey),0)
         val response = client.secretKey(apikey, request)
 
         if (!response.isSuccessful) {
-            throw IllegalStateException("Failed to sign with error ${response.errorBody()}")
+            throw IllegalStateException("Failed to retrieve secret key with error ${response.errorBody()}")
         }
 
         return response.body()?.agreeKey!!

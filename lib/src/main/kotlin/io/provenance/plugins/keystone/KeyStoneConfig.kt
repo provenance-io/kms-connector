@@ -5,5 +5,6 @@ import io.provenance.core.PluginConfig
 data class KeyStoneConfig(
     val encryptionPublicKey: String,
     val signingPublicKey: String,
-    val apiKey: String
+    val apiKey: String,
+    val url: String
 ) : PluginConfig()
