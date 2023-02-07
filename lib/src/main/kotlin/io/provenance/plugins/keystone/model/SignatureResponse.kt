@@ -11,3 +11,5 @@ data class Key(
     val curve: String,
     val encoding: String,
 )
+
+data class Address(val value: String, val type: String)
