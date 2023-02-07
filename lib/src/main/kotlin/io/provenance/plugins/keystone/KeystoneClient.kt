@@ -41,7 +41,6 @@ class KeystoneClient(
 
     override fun sign(data: ByteArray): ByteArray {
         val request = SignatureRequest(data, SigningType.PB)
-        val response = client.sign(apikey, entity, 0, request)
 
         return runBlocking {
 
@@ -60,8 +59,6 @@ class KeystoneClient(
 
         return runBlocking {
             val response = client.secretKey(apikey, request)
-        val request = AgreeKeyRequest(entity, ECUtils.convertPublicKeyToBytes(ephemeralPublicKey), 0)
-        val response = client.secretKey(apikey, request)
 
             if (!response.isSuccessful) {
                 throw IllegalStateException("Failed to retrieve secret key with error ${response.errorBody()}")
