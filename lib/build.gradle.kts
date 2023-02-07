@@ -4,12 +4,16 @@ dependencies {
     implementation("com.google.guava:guava:30.1-jre")
     implementation("com.konghq:unirest-java:3.13.6")
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
-    implementation("io.provenance.scope:encryption:0.5.1")
-    implementation("io.provenance.scope:util:0.5.1")
+    implementation("io.provenance.scope:encryption:0.4.0")
+    implementation("io.provenance.scope:util:0.4.0")
     implementation("io.provenance.hdwallet:hdwallet:0.1.15")
     implementation("io.provenance.hdwallet:hdwallet-bip39:0.1.15")
     implementation("com.fortanix:sdkms-client:3.23.1408")
     implementation("com.google.protobuf:protobuf-java:3.21.12")
+    
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 
     testImplementation("io.kotest:kotest-assertions-core-jvm:5.2.1")
     testImplementation("io.kotest:kotest-property-jvm:5.2.1")

@@ -9,6 +9,7 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -33,6 +34,7 @@ subprojects {
     }
 
     repositories {
+        mavenLocal()
         mavenCentral()
     }
 
