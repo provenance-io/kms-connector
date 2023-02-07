@@ -16,10 +16,11 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 
-    testImplementation("io.kotest:kotest-assertions-core-jvm:5.2.1")
-    testImplementation("io.kotest:kotest-property-jvm:5.2.1")
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.2.1")
-    testImplementation("io.kotest:kotest-framework-datatest-jvm:5.2.1")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.5")
+    testImplementation("io.kotest:kotest-property-jvm:5.5.5")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.5")
+    testImplementation("io.kotest:kotest-framework-datatest-jvm:5.5.5")
     testImplementation("org.slf4j:slf4j-simple:1.7.36")
     testImplementation("io.mockk:mockk:1.12.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 }
