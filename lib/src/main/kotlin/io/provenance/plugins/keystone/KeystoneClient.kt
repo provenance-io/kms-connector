@@ -10,8 +10,8 @@ import io.provenance.plugins.keystone.model.SigningType
 import io.provenance.scope.encryption.crypto.ApiSignerClient
 import io.provenance.scope.encryption.domain.inputstream.DIMEInputStream.Companion.configureProvenance
 import io.provenance.scope.encryption.ecies.ECUtils
+import io.provenance.util.toPrettyJson
 import java.security.PublicKey
-import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -47,7 +47,7 @@ class KeystoneClient(
             val response = client.sign(apikey, entity, 0, request)
 
             if (!response.isSuccessful) {
-                throw IllegalStateException("Failed to sign with error ${response.errorBody()}")
+                throw IllegalStateException("Failed to sign with error ${response.errorBody()!!.toPrettyJson()}")
             }
 
             response.body()?.signatureBytes!!
@@ -61,7 +61,7 @@ class KeystoneClient(
             val response = client.secretKey(apikey, request)
 
             if (!response.isSuccessful) {
-                throw IllegalStateException("Failed to retrieve secret key with error ${response.errorBody()}")
+                throw IllegalStateException("Failed to retrieve secret key with error ${response.errorBody()!!.toPrettyJson()}")
             }
 
             response.body()?.agreeKey!!
@@ -70,7 +70,7 @@ class KeystoneClient(
 }
 
 interface KeystoneApi {
-    @POST("sign/member/{memberUuid}/address/{addressIndex}")
+    @POST("keystone/secured/api/v1/sign/member/{memberUuid}/address/{addressIndex}")
     suspend fun sign(
         @Header("apikey") apikey: String,
         @Path("memberUuid") member: String,
@@ -78,7 +78,7 @@ interface KeystoneApi {
         @Body signatureRequest: SignatureRequest,
     ): Response<SignatureResponse>
 
-    @POST("agree/key")
+    @POST("keystone/secured/api/v1/agree/key")
     suspend fun secretKey(
         @Header("apikey") apikey: String,
         @Body agreeKeyRequest: AgreeKeyRequest,
