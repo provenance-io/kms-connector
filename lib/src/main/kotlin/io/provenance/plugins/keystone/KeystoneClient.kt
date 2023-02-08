@@ -10,7 +10,7 @@ import io.provenance.plugins.keystone.model.SigningType
 import io.provenance.scope.encryption.crypto.ApiSignerClient
 import io.provenance.scope.encryption.domain.inputstream.DIMEInputStream.Companion.configureProvenance
 import io.provenance.scope.encryption.ecies.ECUtils
-import io.provenance.util.toPrettyJson
+import io.provenance.util.errorBodyOrMessage
 import java.security.PublicKey
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
@@ -47,7 +47,7 @@ class KeystoneClient(
             val response = client.sign(apikey, entity, 0, request)
 
             if (!response.isSuccessful) {
-                throw IllegalStateException("Failed to sign with error ${response.errorBody()!!.toPrettyJson()}")
+                throw IllegalStateException("Failed to sign with response code: ${response.code()} error: ${response.errorBodyOrMessage()}")
             }
 
             response.body()?.signatureBytes!!
@@ -61,7 +61,7 @@ class KeystoneClient(
             val response = client.secretKey(apikey, request)
 
             if (!response.isSuccessful) {
-                throw IllegalStateException("Failed to retrieve secret key with error ${response.errorBody()!!.toPrettyJson()}")
+                throw IllegalStateException("Failed to retrieve secret key with response code: ${response.code()} error: ${response.errorBodyOrMessage()}")
             }
 
             response.body()?.agreeKey!!
