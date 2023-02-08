@@ -10,9 +10,9 @@ import io.provenance.scope.encryption.ecies.ECUtils
 import io.provenance.scope.encryption.model.ApiKeyRef
 
 class KeystonePlugin : Plugin<KeystoneConfig> {
-    override fun equals(other: Any?): Boolean {
-        return other is KeystonePlugin
-    }
+    override fun equals(other: Any?): Boolean =
+        other is KeystonePlugin
+    
 
     override fun hashCode(): Int =
         javaClass.hashCode()
