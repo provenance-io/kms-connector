@@ -2,6 +2,7 @@ package io.provenance.plugins.vault
 
 import com.google.gson.Gson
 import io.provenance.core.Plugin
+import io.provenance.core.PluginConfig
 import io.provenance.entity.KeyEntity
 import io.provenance.entity.KeyType
 import io.provenance.entity.direct.DirectKeyEntity
@@ -16,6 +17,15 @@ import mu.KotlinLogging
 class VaultPlugin : Plugin<VaultConfig> {
     private val log = KotlinLogging.logger { }
 
+    override fun equals(other: Any?): Boolean =
+        other is VaultPlugin
+
+    override fun hashCode(): Int =
+        javaClass.hashCode()
+
+    override fun supports(config: PluginConfig): Boolean =
+        config is VaultConfig
+    
     override fun fetch(entity: String, config: VaultConfig): KeyEntity {
 
         log.info("Fetching properties and creating configuration for $entity")
@@ -61,7 +71,7 @@ class VaultPlugin : Plugin<VaultConfig> {
             ),
             getKey(secretData, "private_signing_key", entity).toJavaPrivateKey()) // Use signing key for all signing processes
     }
-
+    
     private fun getKey(secretData: Map<String, Any>, keyName: String, originator: String): String {
         if (!secretData.containsKey(keyName)) {
             throw IllegalArgumentException("Missing $keyName key for $originator.")

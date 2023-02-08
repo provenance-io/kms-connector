@@ -5,6 +5,7 @@ import com.fortanix.sdkms.v1.api.AuthenticationApi
 import com.fortanix.sdkms.v1.api.SignAndVerifyApi
 import com.fortanix.sdkms.v1.auth.ApiKeyAuth
 import io.provenance.core.Plugin
+import io.provenance.core.PluginConfig
 import io.provenance.entity.KeyEntity
 import io.provenance.entity.KeyType
 import io.provenance.entity.fortanix.FortanixKeyEntity
@@ -13,6 +14,17 @@ import io.provenance.scope.encryption.model.SmartKeyRef
 import io.provenance.scope.util.toUuid
 
 class FortanixPlugin: Plugin<FortanixConfig> {
+
+    override fun hashCode(): Int =
+        javaClass.hashCode()
+
+    override fun equals(other: Any?): Boolean =
+        other is FortanixPlugin
+
+    override fun supports(config: PluginConfig): Boolean =
+        config is FortanixConfig
+    
+    
     override fun fetch(entity: String, config: FortanixConfig): KeyEntity {
         
         val smartKeyClient = ApiClient().apply {
