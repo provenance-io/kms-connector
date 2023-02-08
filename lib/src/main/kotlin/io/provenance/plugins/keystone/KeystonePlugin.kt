@@ -2,6 +2,7 @@ package io.provenance.plugins.keystone
 
 import com.google.common.io.BaseEncoding
 import io.provenance.core.Plugin
+import io.provenance.core.PluginConfig
 import io.provenance.entity.KeyEntity
 import io.provenance.entity.KeyType
 import io.provenance.entity.keystone.KeystoneKeyEntity
@@ -9,6 +10,16 @@ import io.provenance.scope.encryption.ecies.ECUtils
 import io.provenance.scope.encryption.model.ApiKeyRef
 
 class KeystonePlugin : Plugin<KeystoneConfig> {
+    override fun equals(other: Any?): Boolean =
+        other is KeystonePlugin
+    
+
+    override fun hashCode(): Int =
+        javaClass.hashCode()
+
+    override fun supports(config: PluginConfig): Boolean =
+        config is KeystoneConfig
+    
     override fun fetch(entity: String, config: KeystoneConfig): KeyEntity {
         val client = KeystoneClient(entity, config.apiKey, config.url)
 
