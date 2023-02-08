@@ -70,7 +70,7 @@ class KeystoneClient(
 }
 
 interface KeystoneApi {
-    @POST("/sign/member/{memberUuid}/address/{addressIndex}")
+    @POST("sign/member/{memberUuid}/address/{addressIndex}")
     suspend fun sign(
         @Header("apikey") apikey: String,
         @Path("memberUuid") member: String,
@@ -78,7 +78,7 @@ interface KeystoneApi {
         @Body signatureRequest: SignatureRequest,
     ): Response<SignatureResponse>
 
-    @POST("/agree/key")
+    @POST("agree/key")
     suspend fun secretKey(
         @Header("apikey") apikey: String,
         @Body agreeKeyRequest: AgreeKeyRequest,

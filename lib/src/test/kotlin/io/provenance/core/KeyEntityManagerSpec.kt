@@ -29,6 +29,7 @@ class KeyEntityManagerSpec : WordSpec() {
                 )
                 
                 every { mockPlugin.fetch(any(), any()) } returns DirectKeyEntity(mapOf(KeyType.SIGNING to DirectKeyRef(kp)), kp.private)
+                every { mockPlugin.supports(any()) } returns true
 
                 val spec = VaultConfig("test", "")
                 val manager = KeyEntityManager()
