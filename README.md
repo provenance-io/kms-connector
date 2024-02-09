@@ -19,7 +19,7 @@ Generic approach to fetching access-controlled keys for Provenance.
 
 ## Examples
 ### Vault
-#### Example Key JSON
+#### JSON Key Entry
 ```json
 {
     "public_signing_key": "0A21024D346A99201D31FCA89A7B8FD1F5AEC3B13E5A4B08FFE6A7C2174C7CC6C0B90D2001",
