@@ -73,6 +73,11 @@ subprojects {
                             name.set("Cody Worsnop")
                             email.set("cworsnop@figure.com")
                         }
+                        developer {
+                            id.set("rpatel-figure")
+                            name.set("Ravi Patel")
+                            email.set("rpatel@figure.com")
+                        }
                     }
 
                     scm {
